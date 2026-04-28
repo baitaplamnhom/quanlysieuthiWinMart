@@ -7,65 +7,57 @@ class LoginPage:
     def __init__(self, master, app_manager):
         self.master = master
         self.app_manager = app_manager
+        self.master.configure(bg="#f5f5f5")
 
-        # Cấu hình cửa sổ
-        self.master.title("WinMart Login")
-        self.master.geometry("400x450")
-        self.master.configure(bg="#f0f2f5")
-
-        self.quanlytk = QuanLyTK("database/tk.csv",["taikhoan","matkhau","sdt","chucvu","cccd"])
-
+        # Kết nối CSDL
+        self.quanlytk = QuanLyTK("database/tk.csv", ["taikhoan", "matkhau", "sdt", "chucvu", "cccd"])
         self.view()
+
     def view(self):
-        # ======= Frame chính =======
-        main_frame = tk.Frame(self.master, bg="white", bd=2, relief="groove")
-        main_frame.place(relx=0.5, rely=0.5, anchor="center", width=320, height=360)
+        # ===== KHUNG CHÍNH (CENTER) =====
+        main_frame = tk.Frame(self.master, bg="#f5f5f5")
+        main_frame.pack(expand=True)
 
-        # ======= Tiêu đề =======
-        tk.Label(main_frame, text="WINMART", 
-                 font=("Arial", 20, "bold"), 
-                 fg="#e53935", bg="white").pack(pady=(20,5))
+        # ===== CARD LOGIN =====
+        card = tk.Frame(main_frame, bg="white", bd=2, relief="groove")
+        card.pack(pady=50, padx=20)
 
-        tk.Label(main_frame, text="Đăng nhập hệ thống", 
-                 font=("Arial", 11), 
-                 bg="white").pack(pady=(0,15))
+        # ===== TIÊU ĐỀ =====
+        tk.Label(card, text="ĐĂNG NHẬP", font=("Arial", 20, "bold"), 
+                 fg="#e53935", bg="white").pack(pady=20)
 
-        # ======= Username =======
-        tk.Label(main_frame, text="Username", 
-                 bg="white", anchor="w").pack(fill="x", padx=20)
-        
-        self.ent_user = tk.Entry(main_frame, bd=1, relief="solid")
-        self.ent_user.pack(padx=20, pady=5, fill="x")
+        # ===== FORM =====
+        form_frame = tk.Frame(card, bg="white")
+        form_frame.pack(padx=30, pady=10)
 
-        # ======= Password =======
-        tk.Label(main_frame, text="Password", 
-                 bg="white", anchor="w").pack(fill="x", padx=20)
-        
-        self.ent_pass = tk.Entry(main_frame, show="*", bd=1, relief="solid")
-        self.ent_pass.pack(padx=20, pady=5, fill="x")
+        # USERNAME
+        tk.Label(form_frame, text="Tài khoản", bg="white", anchor="w").pack(fill="x")
+        self.ent_user = tk.Entry(form_frame, font=("Arial", 12), bd=1, relief="solid")
+        self.ent_user.pack(fill="x", pady=8, ipady=5)
 
-        # ======= Nút đăng nhập =======
-        btn_login = tk.Button(main_frame, text="Đăng nhập",
-                              bg="#4CAF50", fg="white",
-                              font=("Arial", 10, "bold"),
-                              bd=0, height=2,
-                              command=self.login)
-        btn_login.pack(padx=20, pady=(20,10), fill="x")
+        # PASSWORD
+        tk.Label(form_frame, text="Mật khẩu", bg="white", anchor="w").pack(fill="x")
+        self.ent_pass = tk.Entry(form_frame, font=("Arial", 12), show="*", bd=1, relief="solid")
+        self.ent_pass.pack(fill="x", pady=8, ipady=5)
 
-        # ======= Nút thoát =======
-        btn_exit = tk.Button(main_frame, text="Thoát",
-                             bg="#f44336", fg="white",
-                             font=("Arial", 10, "bold"),
-                             bd=0, height=2,
-                             command=self.master.quit)
-        btn_exit.pack(padx=20, fill="x")
+        # ===== NÚT LOGIN =====
+        CustomButton(card, text="ĐĂNG NHẬP", command=self.login, 
+                     style_type="danger", width=25).pack(pady=20)
 
-        # ======= Footer nhỏ =======
-        tk.Label(main_frame, text="© WinMart System", 
-                 bg="white", fg="gray", font=("Arial", 8)).pack(side="bottom", pady=10)
+        # ===== FOOTER =====
+        tk.Label(card, text="© 2026 Hệ thống quản lý", 
+                 font=("Arial", 9), fg="gray", bg="white").pack(pady=(0, 10))
+
     def login(self):
-        # Test nhanh với admin/123456
-        if self.quanlytk.checkLogin(self.ent_user.get(),self.ent_pass.get()) :
-            self.app_manager.show_inventory_page()
+        u = self.ent_user.get().strip()
+        p = self.ent_pass.get().strip()
+
+        if not u or not p:
+            messagebox.showwarning("Lỗi", "Vui lòng nhập đầy đủ tài khoản và mật khẩu!")
+            return
+
+        if self.quanlytk.checkLogin(u, p):
+            messagebox.showinfo("Thành công", f"Chào mừng {u} đã quay trở lại!")
+            self.app_manager.show_home_page()
         else:
-            messagebox.showerror("Lỗi", "Sai tài khoản hoặc mật khẩu!")
+            messagebox.showerror("Thất bại", "Tài khoản hoặc mật khẩu không chính xác!")
