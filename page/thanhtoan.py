@@ -90,7 +90,7 @@ class ThanhToanPage:
 
         # 4. Nút bấm cuối trang
         CustomButton(right_col, text="XÓA MÓN ĐANG CHỌN", command=self.remove_from_cart, style_type="danger").pack(fill="x", padx=25, pady=5)
-        CustomButton(right_col, text="THANH TOÁN & IN HD", command=self.process_checkout, style_type="warning").pack(fill="x", padx=25, pady=5)
+        CustomButton(right_col, text="THANH TOÁN", command=self.process_checkout, style_type="warning").pack(fill="x", padx=25, pady=5)
         CustomButton(right_col, text="QUAY LẠI TRANG CHỦ", command=self.app_manager.show_home_page, style_type="secondary").pack(fill="x", padx=25, pady=15)
 
     def search_product(self, event=None):
