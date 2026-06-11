@@ -1,4 +1,6 @@
+import os
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import ttk
 import pandas as pd
 from common.button import CustomButton
@@ -104,7 +106,6 @@ class HomePage:
             fg="#333",
             font=("Arial", 18, "bold")
         ).pack(pady=(20, 25))
-
         btn_frame = tk.Frame(menu_frame, bg="white")
         btn_frame.pack(pady=10)
 
@@ -145,8 +146,13 @@ class HomePage:
         footer = tk.Frame(self.master, bg="#d70018", height=40)
         footer.pack(fill="x", side="bottom")
 
+        # Khung chứa tiện ích nằm giữa thanh footer để căn đều các nút bấm
+        footer_btn_frame = tk.Frame(footer, bg="#d70018")
+        footer_btn_frame.pack(pady=4)
+
+        # Nút 1: Giới thiệu phần mềm (Giữ nguyên giao diện của bạn - Cột 0)
         tk.Button(
-            footer,
+            footer_btn_frame,
             text="ℹ Giới thiệu phần mềm",
             bg="#d70018",
             fg="white",
@@ -156,7 +162,21 @@ class HomePage:
             cursor="hand2",
             font=("Arial", 10, "bold"),
             command=self.show_about
-        ).pack(pady=8)
+        ).grid(row=0, column=0, padx=15)
+
+        # Nút 2: THÊM MỚI - Hướng dẫn sử dụng kết nối file Word (Cột 1 - Ngang hàng bên phải)
+        tk.Button(
+            footer_btn_frame,
+            text="📖 Hướng dẫn sử dụng",
+            bg="#d70018",
+            fg="white",
+            activebackground="#b30014",
+            activeforeground="white",
+            bd=0,
+            cursor="hand2",
+            font=("Arial", 10, "bold"),
+            command=self.mo_file_word
+        ).grid(row=0, column=1, padx=15)
 
     # ===================== CARD =====================
     def create_card(self, parent, title, value, color):
@@ -178,8 +198,7 @@ class HomePage:
 
         def on_leave(e):
             card.config(bg=color)
-
-        card.bind("<Enter>", on_enter)
+            card.bind("<Enter>", on_enter)
         card.bind("<Leave>", on_leave)
 
         tk.Label(
@@ -242,6 +261,31 @@ Ngày phát hành: 01/06/2026
 
         about.transient(self.master)
         about.grab_set()
+
+    # ===================== THÊM MỚI: MỞ FILE WORD HƯỚNG DẪN =====================
+    def mo_file_word(self):
+        # Định nghĩa tên file Word rút gọn (Đặt ngang hàng với thư mục page và query)
+        ten_file_word = "TaiLieuHuongDan.docx"
+        
+        # Lấy chính xác thư mục gốc hiện tại của dự án bằng os.getcwd()
+        thu_muc_goc = os.getcwd()
+        duong_dan_file = os.path.join(thu_muc_goc, ten_file_word)
+
+        # Kiểm tra tính tồn tại của file để bẫy lỗi crash hệ thống
+        if os.path.exists(duong_dan_file):
+            try:
+                # Ra lệnh cho hệ điều hành kích hoạt Microsoft Word mở file lên
+                os.startfile(duong_dan_file)
+            except Exception as e:
+                messagebox.showerror("Lỗi hệ thống", f"Không thể khởi động Microsoft Word: {str(e)}")
+        else:
+            # Thông báo chỉ dẫn chi tiết vị trí lưu file nếu người dùng quên chưa để file Word vào
+            messagebox.showwarning(
+                "Không tìm thấy file tài liệu",
+                f"Hệ thống không tìm thấy file '{ten_file_word}'!\n\n"
+                f"Vui lòng kiểm tra lại và đảm bảo bạn đã đổi tên file hướng dẫn của mình thành '{ten_file_word}', "
+                f"sau đó lưu nó tại thư mục gốc của dự án (Ngang hàng với thư mục 'query' và 'page')."
+            )
 
     # ===================== LÀM SÁNG MÀU =====================
     def lighten_color(self, color):

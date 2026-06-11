@@ -36,7 +36,7 @@ class QuanLySPPage:
         tk.Label(
             header,
             text="📦 QUẢN LÝ KHO HÀNG WINMART",
-            bg="#d70018",
+            bg="#c30707",
             fg="white",
             font=("Arial", 24, "bold")
         ).pack(pady=20)
